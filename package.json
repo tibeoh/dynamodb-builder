@@ -1,0 +1,16 @@
+{
+  "name": "dynamodb-builder",
+  "version": "1.0.0",
+  "description": "Dynamodb builder",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Thibault Itart-Longueville",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.259.1",
+    "mocha": "^5.2.0",
+    "should": "^13.2.1"
+  }
+}
