@@ -63,7 +63,7 @@ documentClient
 
 ## DynamoDBExpressionBuilder documentation
 
-List of opeartors:
+List of operators:
 
 - ($IS)
 - ($IS NOT)
@@ -117,7 +117,7 @@ let filters = {
 Query looks like:
 
 ```
-(NOT meta_data.vote_count < 20000) OR (vote_average >= 5)
+(NOT meta_data.vote_count < 20000) OR (vote_average >= 4)
 ```
 
 ## TODO
