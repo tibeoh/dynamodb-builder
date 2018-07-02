@@ -14,7 +14,7 @@ npm install dynamodb-builder
 ## How to use?
 
 ```
-const DynamoDBBuilder = require("dynamodb-builder");
+const DDBBuilder = require("dynamodb-builder");
 
 let filters = {
   meta_data: {
@@ -22,7 +22,7 @@ let filters = {
   }
 };
 
-let dynamodbBuilder = new DynamoDBBuilder();
+let dynamodbBuilder = new DDBBuilder.DynamoDBBuilder();
 
 let params = dynamodbBuilder
   .setTableName("movies")
@@ -73,7 +73,7 @@ List of operators:
 - ($LT)
 - ($LTE)
 - ($BETWEEN)
-- ($NOT)
+- ($NOT) It's the only one to be use before an other operator.
 - ($OR)
 
 ### Examples
@@ -117,13 +117,9 @@ let filters = {
 Query looks like:
 
 ```
-(NOT meta_data.vote_count < 20000) OR (vote_average >= 4)
+(NOT meta_data.vote_count < 20000) OR (meta_data.vote_average >= 4)
 ```
 
 ## TODO
 
 - Add Comparison Operator and Function Reference missing: ("($CONTAINS)", "($BEGINS WITH)", "attribute_exists", "attribute_not_exists", "attribute_type")
-
-```
-
-```
