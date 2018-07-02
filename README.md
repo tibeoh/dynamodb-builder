@@ -1,5 +1,7 @@
 # Builder for Amazon DynamoDB
 
+[![Build Status](https://travis-ci.org/tibeoh/dynamodb-builder.svg?branch=master)](https://travis-ci.org/tibeoh/dynamodb-builder)
+
 ## Features
 
 - Build params object for DynamoDB queries
