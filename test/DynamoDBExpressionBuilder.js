@@ -58,7 +58,7 @@ describe("DynamoDBExpressionBuilder", function() {
   });
 
   describe("($OR) ($IS)", function() {
-    it("11.", function() {
+    it("1.", function() {
       let filter = {
         faa: {
           "($OR)": [{ fee: { " foo ($IS) ": "bar" } }, { fuu: "foo" }]
@@ -67,14 +67,14 @@ describe("DynamoDBExpressionBuilder", function() {
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("((#faa.#fee.#foo = bar) OR (#faa.#fuu = foo))");
     });
-    it("12.", function() {
+    it("2.", function() {
       let filter = {
         "($OR)": [{ "foo ($IS) ": "bar", fuu: "foo" }, { "foo ($IS) ": "fee", fuu: "poo" }]
       };
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("((#foo = bar AND #fuu = foo) OR (#foo = fee AND #fuu = poo))");
     });
-    it("13.", function() {
+    it("3.", function() {
       let filter = {
         "($OR)": [{ "foo ($IS) ": "bar", fuu: "foo" }, { "foo ($IS) ": "fee", fuu: "poo" }],
         gee: "ree"
@@ -82,7 +82,7 @@ describe("DynamoDBExpressionBuilder", function() {
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("((#foo = bar AND #fuu = foo) OR (#foo = fee AND #fuu = poo)) AND #gee = ree");
     });
-    it("14.", function() {
+    it("4.", function() {
       let filter = {
         gee: "ree",
         "($OR)": [{ "foo ($IS) ": "bar", fuu: "foo" }, { "foo ($IS) ": "fee", fuu: "poo" }]
@@ -90,7 +90,7 @@ describe("DynamoDBExpressionBuilder", function() {
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("#gee = ree AND ((#foo = bar AND #fuu = foo) OR (#foo = fee AND #fuu = poo))");
     });
-    it("15.", function() {
+    it("5.", function() {
       let filter = {
         faa: {
           gee: "ree",
@@ -100,7 +100,7 @@ describe("DynamoDBExpressionBuilder", function() {
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("#faa.#gee = ree AND ((#faa.#foo = bar AND #faa.#fuu = foo) OR (#faa.#foo = fee AND #faa.#fuu = poo))");
     });
-    it("16.", function() {
+    it("6.", function() {
       let filter = {
         faa: {
           gee: "ree",
@@ -112,6 +112,22 @@ describe("DynamoDBExpressionBuilder", function() {
       };
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("#faa.#gee = ree AND #faa.#gaa.#gii.#fuu = tree AND ((#faa.#gaa.#foo = bar AND #faa.#gaa.#fuu = foo) OR (#faa.#gaa.#foo = fee AND #faa.#gaa.#fuu = poo))");
+    });
+    it("7.", function() {
+      let filter = {
+        gee: "ree",
+        "($OR)": []
+      };
+      let DDBExprParser = new DynamoDBExpressionBuilder(filter);
+      DDBExprParser.debug().should.equal("#gee = ree");
+    });
+    it("8.", function() {
+      let filter = {
+        gee: "ree",
+        fee: { lee: { "($OR)": [] } }
+      };
+      let DDBExprParser = new DynamoDBExpressionBuilder(filter);
+      DDBExprParser.debug().should.equal("#gee = ree");
     });
   });
 
@@ -183,6 +199,11 @@ describe("DynamoDBExpressionBuilder", function() {
       let filter = { fee: { faa: { "foo ($IN)": ["yellow", "black"] } }, gee: "blue" };
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("(#fee.#faa.#foo IN (yellow,black)) AND #gee = blue");
+    });
+    it("4.", function() {
+      let filter = { feee: "tre", faa: { "foo ($IN)": [] }, gee: "oui" };
+      let DDBExprParser = new DynamoDBExpressionBuilder(filter);
+      DDBExprParser.debug().should.equal("#feee = tre AND #gee = oui");
     });
   });
 

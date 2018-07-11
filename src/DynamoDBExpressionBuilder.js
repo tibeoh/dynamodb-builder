@@ -50,6 +50,7 @@ class DynamoDBExpressionBuilder {
 
     Object.keys(obj).forEach(key => {
       let item = obj[key];
+      let temp = undefined;
       let hasNotOperator = this.hasNotOperator(key);
       if (hasNotOperator) {
         key = hasNotOperator;
@@ -61,14 +62,23 @@ class DynamoDBExpressionBuilder {
       } else if (typeof item == "object" && item.length != null) {
         // is an array
         let type = this.getTypeOfValue(key, item);
-        arrayConditions.push(this.expressionObjToString(type, prefix));
+        temp = this.expressionObjToString(type, prefix);
+        if (temp) {
+          arrayConditions.push(temp);
+        }
       } else if (typeof item == "object" && !this.hasOperator(key)) {
-        this.attributesNames[this.toAttributeName(key)] = key;
         let new_prefix = prefix + this.toAttributeName(key) + ".";
-        arrayConditions.push(this.formatRec(item, new_prefix).str);
+        temp = this.formatRec(item, new_prefix).str;
+        if (temp) {
+          this.attributesNames[this.toAttributeName(key)] = key;
+          arrayConditions.push(temp);
+        }
       } else if (typeof item == "object" && this.hasOperator(key)) {
         let type = this.getTypeOfValue(key, item);
-        arrayConditions.push(this.expressionObjToString(type, prefix));
+        temp = this.expressionObjToString(type, prefix);
+        if (temp) {
+          arrayConditions.push(temp);
+        }
       } else {
         let type = this.getTypeOfValue(key, item);
         this.attributesNames[this.toAttributeName(type.key)] = type.key;
@@ -76,7 +86,11 @@ class DynamoDBExpressionBuilder {
         arrayConditions.push(prefix + this.expressionObjToString(type));
       }
     });
-    this.str = arrayConditions.join(" " + operator + " ");
+    this.str = arrayConditions
+      .filter(v => {
+        return v;
+      })
+      .join(" " + operator + " ");
 
     return this;
   }
@@ -86,22 +100,30 @@ class DynamoDBExpressionBuilder {
     array.forEach(value => {
       arrayConditions.push("(" + this.formatRec(value, prefix).str + ")");
     });
-    let str = arrayConditions.join(" " + OR_OPERATOR + " ");
-    return "(" + str + ")";
+    let str = arrayConditions
+      .filter(v => {
+        return v;
+      })
+      .join(" " + OR_OPERATOR + " ");
+    return str ? "(" + str + ")" : "";
   }
 
   inOperation(key, array, prefix) {
-    let inValues = [];
-    this.attributesNames[this.toAttributeName(key)] = key;
-    array.forEach(value => {
-      this.attributesValues[this.toAttributeValue(iteratorValue)] = value;
-      inValues.push(this.toAttributeValue(iteratorValue));
-      this.incIteratorValue();
-    });
+    if (array.length > 0) {
+      let inValues = [];
+      this.attributesNames[this.toAttributeName(key)] = key;
+      array.forEach(value => {
+        this.attributesValues[this.toAttributeValue(iteratorValue)] = value;
+        inValues.push(this.toAttributeValue(iteratorValue));
+        this.incIteratorValue();
+      });
 
-    let str = inValues.join(",");
+      let str = inValues.join(",");
 
-    return "(" + prefix + this.toAttributeName(key) + " IN (" + str + "))";
+      return "(" + prefix + this.toAttributeName(key) + " IN (" + str + "))";
+    } else {
+      return "";
+    }
   }
 
   betweenOperation(key, obj, prefix) {

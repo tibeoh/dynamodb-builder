@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-builder",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Dynamodb builder",
   "main": "src/index.js",
   "scripts": {
