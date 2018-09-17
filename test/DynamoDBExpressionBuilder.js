@@ -145,6 +145,14 @@ describe("DynamoDBExpressionBuilder", function() {
       let DDBExprParser = new DynamoDBExpressionBuilder(filter);
       DDBExprParser.debug().should.equal("#gee = ree AND ((#fee.#lee.#foo = faa) OR (#fee.#lee.#fuu = faa))");
     });
+    it("11.", function() {
+      let filter = {
+        gee: "ree",
+        fee: { lee: { "($OR)": [1, { foo: "faa" }] } }
+      };
+      let DDBExprParser = new DynamoDBExpressionBuilder(filter);
+      DDBExprParser.debug().should.equal("#gee = ree AND (#fee.#lee.#foo = faa)");
+    });
   });
 
   describe("($IS NOT)", function() {

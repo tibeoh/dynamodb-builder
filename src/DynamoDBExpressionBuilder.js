@@ -107,7 +107,10 @@ class DynamoDBExpressionBuilder {
         return v;
       })
       .join(" " + OR_OPERATOR + " ");
-    return str ? "(" + str + ")" : "";
+    if (arrayConditions.length > 1) {
+      return str ? "(" + str + ")" : "";
+    }
+    return str ? str : "";
   }
 
   inOperation(key, array, prefix) {
