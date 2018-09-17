@@ -98,7 +98,9 @@ class DynamoDBExpressionBuilder {
   orOperation(array, prefix) {
     let arrayConditions = [];
     array.forEach(value => {
-      arrayConditions.push("(" + this.formatRec(value, prefix).str + ")");
+      if (typeof value == "object") {
+        arrayConditions.push("(" + this.formatRec(value, prefix).str + ")");
+      }
     });
     let str = arrayConditions
       .filter(v => {
